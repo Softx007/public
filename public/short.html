@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Shortener</title>
+    <script>
+        // Function to generate a short link
+        function generateShortLink() {
+            const baseUrl = "xxx.com?";
+            const randomCode = "xx=" + Math.random().toString(36).substr(2, 4).toUpperCase();
+            const fullUrl = baseUrl + randomCode;
+
+            // Display the short link
+            document.getElementById("shortLink").href = fullUrl;
+            document.getElementById("shortLink").innerText = fullUrl;
+
+            // Prevent form from submitting
+            return false;
+        }
+
+        // Function to simulate redirection
+        function redirectToOriginal() {
+            // In a real scenario, this would be handled server-side
+            window.location.href = "xxx.com?random=true";
+        }
+    </script>
+</head>
+<body>
+    <h2>URL Shortener</h2>
+    <form onsubmit="return generateShortLink()">
+        <input type="text" id="urlInput" placeholder="Enter URL to shorten" required>
+        <button type="submit">Shorten URL</button>
+    </form>
+    <p>Short Link: <a id="shortLink" href="#" onclick="redirectToOriginal()">None</a></p>
+</body>
+</html>

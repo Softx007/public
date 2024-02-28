@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Article Detail</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script>
+  
+        const firebaseConfig = {
+        apiKey: "AIzaSyDROBHFGlUii35q1jBxAjAV3NZT0lsGoCo",
+        authDomain: "test-34d3e.firebaseapp.com",
+        projectId: "test-34d3e",
+        storageBucket: "test-34d3e.appspot.com",
+        messagingSenderId: "335963579697",
+        appId: "1:335963579697:web:cdf6334dde1627ff7bfc10",
+        measurementId: "G-76JW2ZC5JD"
+      };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+    // Existing Firebase and Firestore initialization code...
+
+    function loadArticle() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+        const isRandom = urlParams.get('random');
+
+        if (isRandom) {
+            // Logic to fetch and display a random article
+            db.collection("articles").get().then(snapshot => {
+                const size = snapshot.size;
+                const randomIndex = Math.floor(Math.random() * size);
+                const doc = snapshot.docs[randomIndex];
+                if (!doc) {
+                    document.getElementById('articleContent').innerHTML = '<p>Article not found.</p>';
+                }else {
+    const article = doc.data();
+    document.getElementById('articleTitle').innerText = article.title;
+    document.getElementById('articleContent').innerText = article.content;
+    // Set additional content with safe HTML
+    document.getElementById('additionalContent').innerHTML = `
+        <p>This is some additional text for users redirected to a random article.</p>
+        <p id="countdownText">Countdown 7 seconds</p>
+        <button id="next">next</button>
+    `;
+
+    // Countdown functionality
+    let countdown = 7;
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        document.getElementById('countdownText').innerText = `Countdown ${countdown} seconds`;
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            // Perform action after countdown ends, e.g., hide the message
+           // document.getElementById('additionalContent').style.display = 'none';
+        }
+    }, 1000);
+
+
+}
+
+            });
+        } else if (articleId) {
+            // Logic to fetch and display an article by ID
+            db.collection("articles").doc(articleId).get().then(doc => {
+                if (!doc.exists) {
+                    document.getElementById('articleContent').innerHTML = '<p>Article not found.</p>';
+                } else {
+                    const article = doc.data();
+                    document.getElementById('articleTitle').innerText = article.title;
+                    document.getElementById('articleContent').innerText = article.content;
+                    // Optionally, hide or remove the additional content if it's only for random articles
+                    document.getElementById('additionalContent').innerHTML = '';
+                }
+            }).catch(error => {
+                document.getElementById('articleContent').innerHTML = '<p>Error loading article.</p>';
+                console.error("Error loading article: ", error);
+            });
+        } else {
+            // Default message or action if no parameters are provided
+            document.getElementById('articleContent').innerHTML = '<p>No article specified.</p>';
+        }
+    }
+
+        document.addEventListener('DOMContentLoaded', loadArticle);
+    </script>
+</head>
+<body>
+    <h1 id="articleTitle">Article Title</h1>
+    <div id="articleContent">Loading article...</div>
+    <div id="additionalContent"></div>
+</body>
+</html>

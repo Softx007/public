@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Articles</title>
+    <!-- Update Firebase SDK to use compat libraries for version 9 -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script>
+      // Firebase config object containing keys and identifiers for your app
+      const firebaseConfig = {
+        apiKey: "AIzaSyDROBHFGlUii35q1jBxAjAV3NZT0lsGoCo",
+        authDomain: "test-34d3e.firebaseapp.com",
+        projectId: "test-34d3e",
+        storageBucket: "test-34d3e.appspot.com",
+        messagingSenderId: "335963579697",
+        appId: "1:335963579697:web:cdf6334dde1627ff7bfc10",
+        measurementId: "G-76JW2ZC5JD"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Initialize Cloud Firestore and get a reference to the service
+      const db = firebase.firestore();
+
+      // Function to load articles from Firestore
+      function loadArticles() {
+          db.collection("articles").get().then((querySnapshot) => {
+              const articlesList = document.getElementById('articlesList');
+              querySnapshot.forEach((doc) => {
+                  const article = doc.data();
+                  const articleLink = document.createElement('a');
+                  articleLink.href = `article.html?id=${doc.id}&direct=false`;
+                  articleLink.innerText = article.title;
+                  articlesList.appendChild(articleLink);
+                  articlesList.appendChild(document.createElement('br'));
+              });
+          });
+      }
+
+      // Call loadArticles on page load
+      document.addEventListener('DOMContentLoaded', loadArticles);
+    </script>
+</head>
+<body>
+    <h1>Articles</h1>
+    <div id="articlesList"></div>
+</body>
+</html>
