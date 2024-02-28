@@ -3,12 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Articles</title>
-    <!-- Update Firebase SDK to use compat libraries for version 9 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: 1px solid #0779e4;
+        }
+        header h1 {
+            text-align: center;
+            margin: 0;
+        }
+        .article {
+            background: #fff;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .article img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .article.left img {
+            float: left;
+            margin-right: 20px;
+            width: 100px;
+            height: 100px;
+        }
+        .article.centered img {
+            display: block;
+            margin: 0 auto;
+            width: 100px;
+            height: 100px;
+        }
+        .article.different {
+            background: #e3e3e3;
+            border: 1px solid #ccc;
+        }
+        .article h2 {
+            margin: 0;
+        }
+    </style>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script>
-      // Firebase config object containing keys and identifiers for your app
-      const firebaseConfig = {
+      
+              const firebaseConfig = {
         apiKey: "AIzaSyDROBHFGlUii35q1jBxAjAV3NZT0lsGoCo",
         authDomain: "test-34d3e.firebaseapp.com",
         projectId: "test-34d3e",
@@ -17,34 +70,63 @@
         appId: "1:335963579697:web:cdf6334dde1627ff7bfc10",
         measurementId: "G-76JW2ZC5JD"
       };
-
-      // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
-
-      // Initialize Cloud Firestore and get a reference to the service
       const db = firebase.firestore();
 
-      // Function to load articles from Firestore
       function loadArticles() {
           db.collection("articles").get().then((querySnapshot) => {
               const articlesList = document.getElementById('articlesList');
+              let index = 0; // To track the article index
               querySnapshot.forEach((doc) => {
                   const article = doc.data();
+                  const articleDiv = document.createElement('div');
+                  articleDiv.classList.add('article');
+                  if (index === 0) articleDiv.classList.add('left');
+                  else if (index === 1) articleDiv.classList.add('centered');
+                  else articleDiv.classList.add('different');
+
+                  const img = document.createElement('img');
+                  img.src = 'https://media.istockphoto.com/id/887987150/fr/photo/blogging-femme-lisant-blog.jpg?s=612x612&w=0&k=20&c=bjFoUv7BYGtTN6pmbhP0GcCS4ycEpw7bXsk9GcAqbf4='; // Default image path
+                  img.alt = 'Article Image';
+
+                  const title = document.createElement('h2');
                   const articleLink = document.createElement('a');
                   articleLink.href = `article.html?id=${doc.id}&direct=false`;
                   articleLink.innerText = article.title;
-                  articlesList.appendChild(articleLink);
-                  articlesList.appendChild(document.createElement('br'));
+                  title.appendChild(articleLink);
+
+                  if (index === 0 || index === 1) {
+                    if (index === 1) {
+                        const imgWrapper = document.createElement('div');
+                        imgWrapper.appendChild(img);
+                        articleDiv.appendChild(imgWrapper);
+                    } else {
+                        articleDiv.appendChild(img);
+                    }
+                    articleDiv.appendChild(title);
+                  } else {
+                    articleDiv.appendChild(title);
+                    articleDiv.appendChild(img);
+                  }
+
+                  articlesList.appendChild(articleDiv);
+                  index++;
               });
           });
       }
 
-      // Call loadArticles on page load
       document.addEventListener('DOMContentLoaded', loadArticles);
     </script>
 </head>
 <body>
-    <h1>Articles</h1>
-    <div id="articlesList"></div>
+    <header>
+        <div class="container">
+            <h1>Articles</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="articlesList"></div>
+    </div>
 </body>
 </html>
