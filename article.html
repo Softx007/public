@@ -70,11 +70,31 @@
                     if (!doc) {
                         document.getElementById('articleContent').innerHTML = '<p>Article not found.</p>';
                     } else {
-                        const article = doc.data();
-                        document.getElementById('articleTitle').innerText = article.title;
-                        document.getElementById('articleContent').innerText = article.content;
-                        document.getElementById('additionalContent').innerHTML = '<p>This is some additional text for users redirected to a random article.</p>';
-                    }
+    const article = doc.data();
+    document.getElementById('articleTitle').innerText = article.title;
+    document.getElementById('articleContent').innerText = article.content;
+
+    // Set the countdown starting value
+    let countdownTime = 7;
+
+    // Function to initiate the countdown
+    const startCountdown = () => {
+        // Check if the countdown is over
+        if (countdownTime > 0) {
+            // Show the countdown message
+            document.getElementById('additionalContent').innerHTML = `<p>Redirecting in ${countdownTime} seconds...</p>`;
+            countdownTime--; // Decrement the countdown time
+        } else {
+            // Once the countdown is over, show the button
+            document.getElementById('additionalContent').innerHTML = '<button onclick="alert(\'You clicked the button!\')">Click Me!</button>';
+            clearInterval(interval); // Stop the countdown
+        }
+    };
+
+    // Start the countdown
+    let interval = setInterval(startCountdown, 1000);
+}
+
                 });
             } else if (articleId) {
                 db.collection("articles").doc(articleId).get().then(doc => {
